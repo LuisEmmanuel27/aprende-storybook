@@ -20,6 +20,8 @@ pnpm storybook
 
 4. Notaremos que se creo una carpeta .storybook el cuál contiene dos archivos, main.ts y preview.ts.
 
+# Analizando archivos de Storybook
+
 ## main.ts
 
 Este archivo es una configuración de Storybook para un proyecto que utiliza **React** con **Vite**. Vamos a analizar cada sección del archivo:
@@ -371,3 +373,68 @@ import './button.css';
    - Habilita controles interactivos para props como `backgroundColor` en la UI de Storybook.
 5. **Flexibilidad con `...props`**:
    - Permite simular interacciones, como clics, en Storybook.
+
+# Jugando un poco con los ejemplos de Storybook
+
+## Parameters - Backgrounds
+
+1. Vamos al archvo Button.stories.tsx y veamos la sección de parameters:
+
+```typescript
+parameters: {
+    // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
+    layout: 'centered',
+  },
+```
+
+2. Vemos que tiene un comentario que nos lleva a la documentación de Storybook, pero otra que también nos sirve para este caso es la sección en la documentación de [parameters](https://storybook.js.org/docs/writing-stories/parameters).
+3. Antes de hacer algún cambio, vamos a la ventana de storybook y observemos que hay un botón que nos permite cambiar el fondo del canvas: <br/> ![pic_1](img/pic_1.png)
+4. Si damos click podremos cambiar de light a dark.
+5. Volviendo al código, podemos personalizar estos backgrounds de la siguiente manera:
+
+```typescript
+  parameters: {
+    // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
+    layout: 'centered',
+    backgrounds: {
+      values: [
+        { name: 'light', value: '#ffffff' },
+        { name: 'dark', value: '#000000' },
+        { name: 'gray', value: '#cccccc' },
+        { name: 'darkRed', value: '#a90000' },
+      ],
+    },
+  },
+```
+
+6. Ahora podemos cambiar el fondo del canvas a darkRed o gray, además de que el dark ahora es un negro completo.
+7. En otro lugar donde podemos aplicar esto de manera global, podemos hacerlo en el archivo de `preview.ts`:
+
+```typescript
+const preview: Preview = {
+  parameters: {
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/i,
+      },
+    },
+    backgrounds: {
+      default: 'dark',
+      values: [
+        { name: 'light', value: '#ffffff' },
+        { name: 'dark', value: '#000000' },
+        { name: 'gray', value: '#cccccc' },
+        { name: 'darkRed', value: '#a90000' },
+      ],
+    },
+  },
+};
+```
+
+8. Prueba los cambios en el canvas y observa que aparecen las nuevas opciones de fondo.
+9. Finalmente comenta o elimina los cambios tanto en el archivo de `preview.ts` como en el de `Button.stories.ts`.
+
+## Parameters - tags
+
+1. 
