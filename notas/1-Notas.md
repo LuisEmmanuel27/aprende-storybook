@@ -504,3 +504,99 @@ import * as ButtonStories from './Button.stories.ts'
 ```md
 <Canvas of={ButtonStories.Primary} />
 ```
+
+# Creando un componente nuevo
+
+1. Creamos la carpeta `components` y dentro de ella un archivo `ToDo.tsx` con el siguiente contenido:
+
+```tsx
+interface ToDoProps {
+  id: string
+  todo: string
+}
+
+const ToDo = ({ id, todo }: ToDoProps) => {
+  return (
+    <div>
+      <input type='checkbox' id={id} />
+      {todo}
+    </div>
+  )
+}
+
+export default ToDo
+```
+
+2. Seguido de ello dentro de la misma carpeta creamos un archivo `ToDo.stories.tsx` con el siguiente contenido:
+
+```typescript
+import { Meta } from '@storybook/react'
+import ToDo from './ToDo'
+
+const meta = {
+  title: 'Components/ToDo',
+  component: ToDo,
+  args: {
+    id: '1',
+    todo: 'Hello World',
+  },
+} satisfies Meta<typeof ToDo>
+
+export default meta
+
+export const Default = {}
+```
+
+3. Ahora si abrimos Storybook, podemos ver que aparece nuestro componente.
+4. Probamos agregando otro story en nuetro `ToDo.stories.tsx` con el siguiente contenido y revisamos la documentación:
+
+```typescript
+export const Story2 = {
+  args: {
+    todo: 'Hello Storybook',
+  },
+}
+```
+
+5. Vamos a darle un poco más de vida a nuestro componente con estilo y funcionalidad, para ello creamos un archivo `ToDo.module.css` con el siguiente contenido:
+
+```css
+.completed {
+  text-decoration: line-through;
+}
+```
+
+6. Ahora podemos importarlo en nuestro archivo `ToDo.tsx` y aplicarlo a nuestro componente:
+
+```tsx
+import styles from './ToDo.module.css'
+
+const ToDo = ({ id, todo, isDone }: ToDoProps) => {
+  const [completed, setCompleted] = useState(isDone)
+
+  return (
+    <div>
+      <input
+        type='checkbox'
+        checked={completed}
+        onChange={() => setCompleted(!completed)}
+      />
+      <span className={completed ? styles.completed : ''}>{todo}</span>
+    </div>
+  )
+}
+```
+
+7. Ahora podemos ver que el estilo se aplica correctamente en la pagina de Storybook.
+8. Aprovechemos que hicimos este nuevo estado para crear un nuevo story en `ToDo.stories.tsx`:
+
+```typescript
+export const Completed = {
+  args: {
+    todo: 'Im completed',
+    isDone: true,
+  },
+}
+```
+
+9. Revisamos la documentación y vemos que aparece el nuevo estado.
