@@ -435,6 +435,72 @@ const preview: Preview = {
 8. Prueba los cambios en el canvas y observa que aparecen las nuevas opciones de fondo.
 9. Finalmente comenta o elimina los cambios tanto en el archivo de `preview.ts` como en el de `Button.stories.ts`.
 
-## Parameters - tags
+## Parameters - argTypes
 
-1. 
+1. Asi como se genera la documentación con los comentarios desde el componente, podemos generarlos desde el stories en la sección de argTypes:
+
+```typescript
+  argTypes: {
+    backgroundColor: {
+      control: 'color',
+      description: 'Comment from stories',
+    },
+  },
+```
+
+2. Ahora si revisamos la documentación de Storybook, podemos ver que aparece el comentario que agregamos, sobre escbribiendo incluso el ya existente dentro del mismo componente. <br/> ![pic_2](img/pic_2.png)
+3. De igual manera podemos agregarlos en el archibo `preview.ts` para que se apliquen a todas las historias:
+
+```typescript
+const preview: Preview = {
+  parameters: {
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/i,
+      },
+    },
+    backgrounds: {
+      default: 'dark',
+      values: [
+        { name: 'light', value: '#ffffff' },
+        { name: 'dark', value: '#000000' },
+        { name: 'gray', value: '#cccccc' },
+        { name: 'darkRed', value: '#a90000' },
+      ],
+    },
+    argTypes: {
+      backgroundColor: {
+        control: 'color',
+        description: 'Comment from preview.ts',
+      },
+    },
+  },
+};
+```
+
+# Documentación con Markdown
+
+1. Para crear una documentación más completa podemos hacer uso de Markdown en combinación con JSX, para eso creamos un nuevo archivo dentro de `stories` de nombre `Button.mdx` y agregamos el siguiente contenido:
+
+```md
+import { Canvas, Meta } from '@storybook/blocks'
+import * as ButtonStories from './Button.stories.ts'
+
+<Meta of={ButtonStories} />
+
+# Hola Storybook
+```
+
+2. Pero nos dara un error, ya que tenemos activa la documentación automática, para desactivarla debemos editar el archivo `Button.stories.ts` y comentar la etiqueta `tags: ['autodocs']`:
+
+```typescript
+// tags: ['autodocs'],
+```
+
+3. El error debería desaparecer y veremos ahora en `Docs` lo que tenemos en nuestro archivo `Button.mdx`.
+4. Podemos hacer uso de Canvas para mostrar las stories de nuestro componente:
+
+```md
+<Canvas of={ButtonStories.Primary} />
+```
