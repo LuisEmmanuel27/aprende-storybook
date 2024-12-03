@@ -600,3 +600,5 @@ export const Completed = {
 ```
 
 9. Revisamos la documentación y vemos que aparece el nuevo estado.
+
+# [Continuación](2-Notas.md)
