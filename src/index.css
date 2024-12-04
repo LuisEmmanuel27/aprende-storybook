@@ -1,3 +1,12 @@
 :root {
   --primary: #1ea7fd;
+  --text: black;
+  --grey: #eee;
+}
+
+.dark-theme {
+  background-color: #121212;
+  --primary: #b4d7ff;
+  --text: white;
+  --grey: #282828;
 }

@@ -11,7 +11,7 @@ const ToDo = ({ id, todo, isDone }: ToDoProps) => {
   const [completed, setCompleted] = useState(isDone)
 
   return (
-    <div>
+    <div className={styles.toDo}>
       <input
         type='checkbox'
         id={id}
