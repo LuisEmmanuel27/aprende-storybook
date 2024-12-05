@@ -387,3 +387,5 @@ decorators: [
 ```
 
 19. Finalmente probamos que efectivamente ya funciona el botón de tema que agregamos al toolbar.
+
+# [Continuar](3-Notas.md)
