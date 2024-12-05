@@ -277,7 +277,7 @@ decorators: [
   (Story) => (
     <div>
       <Story />
-      <div className='dark-theme'>
+      <div className='dark-theme' style={{padding: '.5rem'}}>
         <Story />
       </div>
     </div>
@@ -306,7 +306,7 @@ const preview: Preview = {
     (Story) => (
       <div>
         <Story />
-        <div className='dark-theme'>
+        <div className='dark-theme' style={{padding: '.5rem'}}>
           <Story />
         </div>
       </div>
