@@ -179,6 +179,8 @@ export const decorators = [
 
 ---
 
+# Agregando Decorators a nuestra practica
+
 1. Como los decorators se suelen crear con sintaxis de JSX vamos a cambiar la extensión de nuestro ToDo.stories.ts a .tsx
 2. Ahora en el objeto `meta` vamos a agregar algo simple y visual para que veamos con más claridad como funciona:
 
@@ -318,3 +320,70 @@ export default preview
 ```
 
 12. Revisamos que cambia en la pagina de Storybook.
+13. Notamos que en los previews de Storybook tenemos tanto el componente con tema light como el con tema dark, pero puede que no queramos eso, si no tenerlos por separado, para ello vamos a realizar algunos cambios.
+14. Primero notemos la barra con herramientas que aparece en la parte superior de los previews: <br/> ![pic_3](img/pic_3.png)
+15. También podemos revisar la documentación: [link](https://storybook.js.org/docs/essentials/toolbars-and-globals#global-types-and-the-toolbar-annotation)
+16. Ahora iremos a nuestro archivo `preview.tsx` y agregamos lo siguiente:
+
+```jsx
+const preview: Preview = {
+  parameters: {
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/i,
+      },
+    },
+  },
+  // agregado
+  globalTypes: {
+    theme: {
+      description: 'Dark or Light Theme',
+      toolbar: {
+        title: 'Theme',
+        icon: 'circlehollow',
+        items: ['light', 'dark', 'both'],
+        dynamicTitle: true,
+      },
+    },
+  },
+  // agregado
+  initialGlobals: {
+    theme: 'light',
+  },
+}
+```
+
+17. Si vamos a la pagina de Storybook notaremos que ya aparece el icono con las opciones que le dimos, pero da igual cual seleccionemos, ninguna va a funcionar, aún debemos completar esa parte.
+18. Para que termine de funcionar debemos modificar el decorator:
+
+```jsx
+decorators: [
+  (Story, context) => {
+    const { theme } = context.globals
+
+    if (theme === 'light') {
+      return <Story />
+    }
+
+    if (theme === 'dark') {
+      return (
+        <div className='dark-theme' style={{ padding: '.5rem' }}>
+          <Story />
+        </div>
+      )
+    }
+
+    return (
+      <div>
+        <Story />
+        <div className='dark-theme' style={{ padding: '.5rem' }}>
+          <Story />
+        </div>
+      </div>
+    )
+  },
+],
+```
+
+19. Finalmente probamos que efectivamente ya funciona el botón de tema que agregamos al toolbar.
