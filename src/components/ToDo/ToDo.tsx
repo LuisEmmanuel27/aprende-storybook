@@ -1,24 +1,24 @@
 import { useState } from 'react'
 import styles from './ToDo.module.css'
 
-interface ToDoProps {
-  id: string
-  todo: string
-  isDone?: boolean
+export interface ToDoProps {
+  id: number
+  title: string
+  completed?: boolean
 }
 
-const ToDo = ({ id, todo, isDone }: ToDoProps) => {
-  const [completed, setCompleted] = useState(isDone)
+const ToDo = ({ id, title, completed: isCompleted = false }: ToDoProps) => {
+  const [completed, setCompleted] = useState(isCompleted)
 
   return (
     <div className={styles.toDo}>
       <input
         type='checkbox'
-        id={id}
+        id={id.toString()}
         checked={completed}
         onChange={() => setCompleted(!completed)}
       />
-      <span className={completed ? styles.completed : ''}>{todo}</span>
+      <span className={completed ? styles.completed : ''}>{title}</span>
     </div>
   )
 }

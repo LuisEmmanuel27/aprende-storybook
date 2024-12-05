@@ -5,8 +5,8 @@ const meta = {
   title: 'Components/ToDo',
   component: ToDo,
   args: {
-    id: '1',
-    todo: 'Hello World',
+    id: 1,
+    title: 'Hello World',
   },
 } satisfies Meta<typeof ToDo>
 
@@ -16,13 +16,13 @@ export const Default = {}
 
 export const Story2 = {
   args: {
-    todo: 'Hello Storybook',
+    title: 'Hello Storybook',
   },
 }
 
 export const Completed = {
   args: {
-    todo: 'Im completed',
-    isDone: true,
+    title: 'Im completed',
+    completed: true,
   },
 }
