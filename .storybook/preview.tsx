@@ -1,8 +1,13 @@
 import type { Preview } from '@storybook/react'
 import '../src/index.css'
 import React from 'react'
+import { initialize } from 'msw-storybook-addon'
+import { mswLoader } from 'msw-storybook-addon'
+
+initialize()
 
 const preview: Preview = {
+  loaders: [mswLoader],
   parameters: {
     controls: {
       matchers: {
