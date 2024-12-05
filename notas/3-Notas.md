@@ -115,5 +115,105 @@ export default meta
 export const Default = {}
 ```
 
-8. REvisamos que se ha creado el componente en la pagina de Storybook.
-9. 
+8. Revisamos que se ha creado el componente en la pagina de Storybook.
+9. En la [documentación](https://storybook.js.org/docs/writing-stories/mocking-data-and-modules/mocking-network-requests#set-up-the-msw-addon) vemos como instalar la extensión MSW, en este caso el comando es:
+
+```bash
+pnpm add msw msw-storybook-addon --save-dev
+```
+
+10. Para más información sobre la extensión MSW podemos ir a su [documentación](https://msw-sb.vercel.app/?path=/docs/guides-getting-started--docs), la cuál vamos a seguir un poco para configurar la extensión.
+11. Empezando por crear el service worker:
+
+```bash
+npx msw init public/
+```
+
+12. Seguido de eso vamos a nuestro archivo `preview.tsx` y agregamos lo siguiente:
+
+```jsx
+import { initialize } from 'msw-storybook-addon' // agregado
+import { mswLoader } from 'msw-storybook-addon' // agregado
+
+initialize() // agregado
+
+const preview: Preview = {
+  loaders: [mswLoader], // agregado
+  .
+  .
+  .
+}
+```
+
+13. Creamos una carpeta `__fixtures__` dentro de los archivos de `ToDoList` y dentro de ella creamos un archivo `todos.ts` que va a contener los datos de los ToDos, para ello vamos a crear un array de objetos `ToDoProps` y luego exportamos el mismo:
+
+```ts
+import { ToDoProps } from '../../ToDo/ToDo'
+
+export const todos: ToDoProps[] = [
+  {
+    id: 1,
+    title: 'Hello World',
+    completed: false,
+  },
+  {
+    id: 2,
+    title: 'Hello Storybook',
+    completed: false,
+  },
+  {
+    id: 3,
+    title: 'Im completed',
+    completed: true,
+  },
+]
+```
+
+14. Finalmente en ToDoList.stories.tsx agregamos los parameters de MSW:
+
+```jsx
+import { Meta } from '@storybook/react'
+import { ToDoList } from './ToDoList'
+import { http, HttpResponse } from 'msw'
+import { todos } from './__fixtures__/todos'
+
+const meta = {
+  title: 'Components/ToDoList',
+  component: ToDoList,
+  // agregados
+  parameters: {
+    msw: {
+      handlers: [
+        http.get('https://jsonplaceholder.typicode.com/todos?_limit=10', () => {
+          return HttpResponse.json(todos)
+        }),
+      ],
+    },
+  },
+} satisfies Meta<typeof ToDoList>
+
+export default meta
+
+export const Default = {}
+```
+
+15. Revisamos que el componente ToDoList ya no haga el fech a jsonplaceholder, sino que debe aparecer los ToDos que tenemos en nuestro archivo `todos.ts`.
+16. También podemos simular un error y darle su propia story, para ello solo agregamos lo siguiente al final de nuestro archivo `ToDoList.stories.tsx`:
+
+```jsx
+export const Default = {}
+
+export const Error = {
+  parameters: {
+    msw: {
+      handlers: [
+        http.get('https://jsonplaceholder.typicode.com/todos?_limit=10', () => {
+          return HttpResponse.error()
+        }),
+      ],
+    },
+  },
+}
+```
+
+17. Revisamos que aparezca una nueva story en la pagina de Storybook dondé vemos que pasa si hay un error.
