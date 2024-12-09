@@ -217,3 +217,5 @@ export const Error = {
 ```
 
 17. Revisamos que aparezca una nueva story en la pagina de Storybook dondé vemos que pasa si hay un error.
+
+# [Continuar](4-Notas.md)
