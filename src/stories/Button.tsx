@@ -1,6 +1,7 @@
 import './button.css'
 
-export interface ButtonProps {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Is this the principal call to action on the page? */
   primary?: boolean
   /** What background color to use */
@@ -26,7 +27,7 @@ export const Button = ({
     : 'storybook-button--secondary'
   return (
     <button
-      type='button'
+      // type='button'
       className={['storybook-button', `storybook-button--${size}`, mode].join(
         ' '
       )}

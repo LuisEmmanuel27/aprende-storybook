@@ -14,7 +14,7 @@ const ToDo = ({ id, title, completed: isCompleted = false }: ToDoProps) => {
     <div className={styles.toDo}>
       <input
         type='checkbox'
-        aria-label='todo-lab'
+        aria-label={title}
         id={id.toString()}
         checked={completed}
         onChange={() => setCompleted(!completed)}

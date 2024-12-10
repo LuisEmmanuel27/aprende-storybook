@@ -210,7 +210,7 @@ const config: StorybookConfig = {
     <div className={styles.toDo}>
       <input
         type='checkbox'
-        aria-label='todo-lab' // <-- agregamos esto
+        aria-label={title} // <-- agregamos esto
         id={id.toString()}
         checked={completed}
         onChange={() => setCompleted(!completed)}
@@ -222,3 +222,111 @@ const config: StorybookConfig = {
 ```
 
 5. Vuelve a revisar la ventana de accesibilidad, ahora no debera aparecer ninguna violación.
+
+---
+
+# Testing
+
+1. Vamos a nuestro componente `ToDoList` y añadimos la funcionalidad de agregar nuevos elementos a la lista:
+
+```jsx
+// Componente ToDoList.tsx
+export const ToDoList = () => {
+  const [todos, setTodos] = useState<ToDoProps[] | undefined>()
+  const [error, setError] = useState<boolean>(false)
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/todos?_limit=10')
+      .then((response) => response.json())
+      .then((json) => setTodos(json))
+      .catch(() => setError(true))
+  }, [])
+
+  const onSave = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const formData = new FormData(event.currentTarget)
+    const title = formData.get('todo') as string
+
+    if (!title) return
+
+    const newTodo: ToDoProps = {
+      id: (todos?.length || 0) + 1,
+      title,
+      completed: false,
+    }
+
+    setTodos([newTodo, ...(todos || [])])
+    event.currentTarget.reset()
+  }
+
+  return (
+    <div>
+      <h1>Todo List</h1>
+      <form onSubmit={onSave}>
+        <label htmlFor='todo'>Todo</label>
+        <input type='text' name='todo' id='todo' />
+        <Button label='Guardar' primary type='submit' />
+      </form>
+      {error && <h1>Error, intenta más tarde</h1>}
+      {todos?.map((item) => (
+        <ToDo {...item} />
+      ))}
+    </div>
+  )
+}
+```
+
+2. Verificamos en la pagina de storybook que funciona nuestro formulario de agregar nuevos elementos a la lista.
+3. Aquí es donde entra el concepto de **play**, para saber más podemos ve la documentación de [Play function](https://storybook.js.org/docs/writing-stories/play-function).
+4. Ahora vamos a nuestro archivo `ToDoList.stories.tsx` y añadimos el test para que se añada un nuevo elemento a la lista, similar a cypress:
+
+```jsx
+import { userEvent, within } from '@storybook/test'
+
+const meta = {
+  title: 'Components/ToDoList',
+  component: ToDoList,
+  // agregamos el play
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const todoInput = canvas.getByLabelText('Todo')
+    await userEvent.type(todoInput, 'Buy milk')
+
+    const saveButton = canvas.getByRole('button')
+    await userEvent.click(saveButton)
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        http.get('https://jsonplaceholder.typicode.com/todos?_limit=10', () => {
+          return HttpResponse.json(todos)
+        }),
+      ],
+    },
+  },
+} satisfies Meta<typeof ToDoList>
+```
+
+5. Ahora volvemos a la pagina de storybook y deberíamos ver en la pestaña inferior de nombre `Interactions` el test que acabamos de añadir: <br/> ![pic_5](img/pic_5.png)
+6. Incluso podemos agregar el conocido `expect`, para ello modificamos un poco el test:
+
+```jsx
+import { expect, userEvent, within } from '@storybook/test'
+
+play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement)
+  const todoInput = canvas.getByLabelText('Todo')
+  await userEvent.type(todoInput, 'Buy milk')
+
+  const saveButton = canvas.getByRole('button')
+  await userEvent.click(saveButton)
+
+  const newTodo = canvas.getByText('Buy milk')
+  await expect(newTodo).toBeInTheDocument()
+},
+```
+
+7. Ahora volvemos a la pagina de storybook y verificamos que pase el expect que agregamos.
+
+---
